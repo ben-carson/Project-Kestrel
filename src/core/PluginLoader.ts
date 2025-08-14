@@ -27,9 +27,9 @@ export class PluginLoader {
   
   // Static bundled plugin import map for Vite
   private static bundledPlugins: Record<string, () => Promise<any>> = {
-    'aida': () => import('../plugins/aida/index.ts'),
+    'aida': () => import('../plugins/aida/index.tsx'),
     'maia': () => import('../plugins/maia/index.ts'), 
-    'dummy': () => import('../plugins/dummy/index.ts')
+    'dummy': () => import('../plugins/dummy/DummyPlugin.ts')
   };
   
   constructor(config: Partial<LoaderConfig> = {}) {

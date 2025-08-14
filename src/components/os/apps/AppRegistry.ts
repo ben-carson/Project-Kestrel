@@ -1,4 +1,5 @@
-// AppRegistry.ts - Merged Kestrel OS apps with migrated widget apps
+// src/components/os/apps/AppRegistry.ts
+// Merged Kestrel OS apps with migrated widget apps
 import { Terminal, Shield, Activity, Folder, BellRing, Globe, Bell } from 'lucide-react';
 import type { AppManifest } from '../../../types/os.types';
 
@@ -11,7 +12,7 @@ export const AppRegistry: Record<string, AppManifest> = {
     permissions: ['events:publish', 'events:subscribe'],
     mount: async () => ({ default: () => null })
   },
-  
+
   'kestrel-terminal': {
     id: 'kestrel-terminal',
     title: 'Terminal',
@@ -19,7 +20,7 @@ export const AppRegistry: Record<string, AppManifest> = {
     permissions: ['ui:window', 'events:publish', 'events:subscribe'],
     mount: async () => ({ default: () => null }) // Replace with real TerminalApp when ready
   },
-  
+
   'kestrel-files': {
     id: 'kestrel-files',
     title: 'Files',
@@ -95,5 +96,12 @@ export const AppRegistry: Record<string, AppManifest> = {
     icon: Activity,
     permissions: ['ui:window', 'events:subscribe', 'data:metrics.read'],
     mount: () => import('./PerformanceMetricsApp.jsx'), // Maps to performance-metrics implementation
+  },
+  'plugin-diagnostics': {
+    id: 'plugin-diagnostics',
+    title: 'Plugin Diagnostics',
+    icon: Plug,
+    permissions: ['ui:window'],
+    mount: () => import('../admin/PluginPanel'), // path above
   },
 };
