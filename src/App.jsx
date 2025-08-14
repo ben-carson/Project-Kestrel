@@ -1,5 +1,8 @@
+// src/App.jsx
 import React from 'react';
 import ToastProvider from './components/ui/ToastProvider.jsx';
+import WindowManager from './components/os/WindowManager';
+import { PluginProvider } from './components/os/PluginProvider';
 
 export default function App() {
   const [DesktopShell, setDesktopShell] = React.useState(null);
@@ -21,17 +24,10 @@ export default function App() {
       {DesktopShell ? (
         <DesktopShell />
       ) : (
-        <div className="h-screen w-screen grid place-items-center">
-          <div className="max-w-xl text-center">
-            <h1 className="text-3xl font-semibold mb-3">Project Kestrel</h1>
-            <p className="opacity-80">
-              OS shell not found. Merge the OS <code>src/components/os</code> folder and restart.
-            </p>
-            <p className="mt-2 text-sm opacity-60">
-              Frontend & API are up. Try hitting <code>/api/health</code>.
-            </p>
-          </div>
-        </div>
+        // fallback shell so system still works without DesktopShell.jsx
+        <PluginProvider>
+          <WindowManager />
+        </PluginProvider>
       )}
     </ToastProvider>
   );

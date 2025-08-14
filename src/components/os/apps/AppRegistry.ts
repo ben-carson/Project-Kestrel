@@ -1,6 +1,6 @@
 // src/components/os/apps/AppRegistry.ts
 // Merged Kestrel OS apps with migrated widget apps
-import { Terminal, Shield, Activity, Folder, BellRing, Globe, Bell } from 'lucide-react';
+import { Terminal, Shield, Activity, Folder, BellRing, Globe, Bell, Plug } from 'lucide-react';
 import type { AppManifest } from '../../../types/os.types';
 
 export const AppRegistry: Record<string, AppManifest> = {
