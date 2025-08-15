@@ -4,50 +4,67 @@ import Taskbar from './Taskbar.jsx';
 import AppLauncher from './AppLauncher.jsx';
 import ContextMenu from './ContextMenu.jsx';
 import useGlobalShortcuts from '../../hooks/useGlobalShortcuts';
-import { useUIStore } from '../../store/useUIStore.ts';
 import useBreachToasts from '../../hooks/useBreachToasts.jsx';
+import { useUIStore } from '../../store/useUIStore.ts';
 import { PluginProvider } from './PluginProvider';
 
 export default function DesktopShell() {
-  // Start global listeners - this is good practice for top-level components
   useBreachToasts();
   useGlobalShortcuts();
 
-  // State for the context menu
   const [ctx, setCtx] = React.useState(null);
-  
-  // Get the launchApp action from the Zustand store
-  const launch = useUIStore(s => s.launchApp);
+  const launchApp = useUIStore((s) => s.launchApp);
+  const openLauncher = useUIStore((s) => s.openLauncher);
 
-  // Handler for the desktop right-click context menu
   const onDesktopContext = (e) => {
-    e.preventDefault(); // Prevent default browser menu
+    e.preventDefault();
     setCtx({
-      x: e.clientX, y: e.clientY,
+      x: e.clientX,
+      y: e.clientY,
       items: [
-        { label: 'Open Terminal', action: () => launch('kestrel-terminal') },
-        { label: 'System Monitor', action: () => launch('system-health') },
-        { label: 'Files', action: () => launch('kestrel-files') },
+        { label: 'Open Terminal', action: () => launchApp('kestrel-terminal') },
+        { label: 'System Monitor', action: () => launchApp('system-health') },
+        { label: 'Files',         action: () => launchApp('kestrel-files') },
         { separator: true },
-        { label: 'Settings', action: () => {} } // Placeholder action
-      ]
+        { label: 'Settings', action: () => {} },
+      ],
     });
   };
 
-  // A React component must return a single element tree.
-  // The PluginProvider now wraps the entire shell.
   return (
     <PluginProvider enabledByDefault={import.meta.env.VITE_PLUGINS_ENABLED === 'true'}>
-      <div 
-        className="w-screen h-screen bg-neutral-900 text-neutral-100 overflow-hidden" 
-        onContextMenu={onDesktopContext}
-      >
-        {/* The desktop UI layers */}
-        <div className="absolute inset-0"><WindowManager /></div>
-        <div className="absolute bottom-0 inset-x-0"><Taskbar /></div>
-        <AppLauncher />
+      <div className="relative w-screen h-screen bg-neutral-900 text-neutral-100 overflow-hidden">
+        {/* Top bar */}
+        <header className="relative z-[1000] h-14 border-b border-neutral-800 flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="font-semibold tracking-wide">Kestrel</div>
+            <span className="text-xs opacity-60">Desktop</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={openLauncher}
+              className="px-3 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-neutral-700"
+              title="Open launcher (Ctrl+Space)"
+            >
+              ☰
+            </button>
+          </div>
+        </header>
 
-        {/* Conditionally render the context menu when its state is set */}
+        {/* Desktop / windows layer (beneath header) */}
+        {/* Desktop / windows layer (between header and taskbar) */}
+ 		<div
+    	   className="absolute left-0 right-0 top-14 bottom-12 z-[200]"
+		   onContextMenu={onDesktopContext}
+		>
+          <WindowManager />
+        </div>
+
+        {/* Overlays */}
+        <AppLauncher />  {/* z-[1100] set inside component */}
+        <Taskbar />      {/* z-[900]   set inside component */}
+
+        {/* Context menu */}
         {ctx && <ContextMenu {...ctx} onClose={() => setCtx(null)} />}
       </div>
     </PluginProvider>

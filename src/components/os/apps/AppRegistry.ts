@@ -1,16 +1,35 @@
 // src/components/os/apps/AppRegistry.ts
-// Merged Kestrel OS apps with migrated widget apps
+// Unified app registry compatible with useUIStore.launchApp (component | loader | import)
+
 import { Terminal, Shield, Activity, Folder, BellRing, Globe, Bell, Plug } from 'lucide-react';
 import type { AppManifest } from '../../../types/os.types';
+import type { ComponentType } from 'react';
 
-export const AppRegistry: Record<string, AppManifest> = {
+// Extend your manifest with fields our launcher understands
+export type KestrelApp = AppManifest & {
+  // One of these must be present for the launcher:
+  component?: ComponentType<any>;
+  loader?: () => Promise<any>;
+  import?: () => Promise<any>;
+  // Optional window sizing hints
+  w?: number;
+  h?: number;
+};
+
+// NOTE: keep 'mount' for any legacy code that still uses it, but the launcher will
+// use 'component' / 'loader' / 'import'. We include both where useful.
+
+export const AppRegistry: Record<string, KestrelApp> = {
   // === KESTREL CORE APPS ===
   'kestrel-core': {
     id: 'kestrel-core',
     title: 'Kestrel Core (bg)',
     icon: Activity,
     permissions: ['events:publish', 'events:subscribe'],
-    mount: async () => ({ default: () => null })
+    // Background app: no visible UI yet
+    component: () => null,
+    mount: async () => ({ default: () => null }),
+    w: 860, h: 520,
   },
 
   'kestrel-terminal': {
@@ -18,7 +37,11 @@ export const AppRegistry: Record<string, AppManifest> = {
     title: 'Terminal',
     icon: Terminal,
     permissions: ['ui:window', 'events:publish', 'events:subscribe'],
-    mount: async () => ({ default: () => null }) // Replace with real TerminalApp when ready
+    // TODO: point to real terminal when ready
+    // component: () => null,
+    import: () => import('./TerminalApp.jsx').catch(() => ({ default: () => null })),
+    mount: async () => ({ default: () => null }),
+    w: 900, h: 540,
   },
 
   'kestrel-files': {
@@ -26,7 +49,9 @@ export const AppRegistry: Record<string, AppManifest> = {
     title: 'Files',
     icon: Folder,
     permissions: ['ui:window'],
-    mount: async () => ({ default: () => null })
+    import: () => import('./FilesApp.jsx').catch(() => ({ default: () => null })),
+    mount: async () => ({ default: () => null }),
+    w: 980, h: 640,
   },
 
   'kestrel-breach-monitor': {
@@ -34,10 +59,12 @@ export const AppRegistry: Record<string, AppManifest> = {
     title: 'Breach Monitor',
     icon: BellRing,
     permissions: ['ui:window', 'events:subscribe'],
+    import: () => import('./BreachMonitorApp.jsx'),
     mount: () => import('./BreachMonitorApp.jsx'),
+    w: 920, h: 600,
   },
 
-  // === MIGRATED WIDGET APPS (Your sophisticated dashboard widgets) ===
+  // === MIGRATED WIDGET APPS ===
   'performance-metrics': {
     id: 'performance-metrics',
     title: 'Performance Metrics',
@@ -46,12 +73,14 @@ export const AppRegistry: Record<string, AppManifest> = {
       'ui:window',
       'events:subscribe',
       'data:metrics.read',
-      'events:publish', // For AIDA agent communication
-      'aida:agent.access', // For AIDA intelligence features
-      'maia:memory.read',  // For MAIA memory access
-      'maia:memory.write'  // For MAIA memory storage
+      'events:publish',
+      'aida:agent.access',
+      'maia:memory.read',
+      'maia:memory.write',
     ],
+    import: () => import('./PerformanceMetricsApp.jsx'),
     mount: () => import('./PerformanceMetricsApp.jsx'),
+    w: 1100, h: 700,
   },
 
   'alert-center': {
@@ -63,31 +92,33 @@ export const AppRegistry: Record<string, AppManifest> = {
       'events:subscribe',
       'data:alerts.read',
       'events:publish',
-      'aida:agent.access'
+      'aida:agent.access',
     ],
+    import: () => import('./AlertCenterApp.jsx'),
     mount: () => import('./AlertCenterApp.jsx'),
+    w: 560, h: 640,
   },
 
   'network-topology': {
     id: 'network-topology',
     title: 'Network Topology',
     icon: Globe,
-    permissions: [
-      'ui:window',
-      'events:subscribe',
-      'data:topology.read',
-      'data:metrics.read'
-    ],
+    permissions: ['ui:window', 'events:subscribe', 'data:topology.read', 'data:metrics.read'],
+    import: () => import('./NetworkTopologyApp.jsx'),
     mount: () => import('./NetworkTopologyApp.jsx'),
+    w: 1100, h: 700,
   },
 
-  // === LEGACY COMPATIBILITY (keeping original names for backward compatibility) ===
+  // === LEGACY COMPATIBILITY ===
   'security-events': {
     id: 'security-events',
     title: 'Security Events',
     icon: Shield,
     permissions: ['ui:window', 'events:subscribe', 'data:alerts.read'],
-    mount: () => import('./AlertCenterApp.jsx'), // Maps to alert-center implementation
+    // maps to alert-center implementation
+    import: () => import('./AlertCenterApp.jsx'),
+    mount: () => import('./AlertCenterApp.jsx'),
+    w: 1000, h: 680,
   },
 
   'system-health': {
@@ -95,13 +126,18 @@ export const AppRegistry: Record<string, AppManifest> = {
     title: 'System Health',
     icon: Activity,
     permissions: ['ui:window', 'events:subscribe', 'data:metrics.read'],
-    mount: () => import('./PerformanceMetricsApp.jsx'), // Maps to performance-metrics implementation
+    import: () => import('./SystemHealthApp.jsx'),
+    mount: () => import('./SystemHealthApp.jsx'),
+    w: 1100, h: 700,
   },
+
   'plugin-diagnostics': {
     id: 'plugin-diagnostics',
     title: 'Plugin Diagnostics',
     icon: Plug,
     permissions: ['ui:window'],
-    mount: () => import('../admin/PluginPanel'), // path above
+    import: () => import('../admin/PluginPanel'),
+    mount: () => import('../admin/PluginPanel'),
+    w: 900, h: 560,
   },
 };

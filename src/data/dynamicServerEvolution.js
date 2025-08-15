@@ -1,5 +1,6 @@
 // Enhanced Dynamic Server Evolution System
 // Adds predictive analytics, smart auto-healing, and contextual intelligence
+// Updated with interval cleanup and module-level controls
 
 export const evolveServerState = (server, deltaTime = 1000, globalCtx = {}) => {
   const engine = new ServerEvolutionEngine([], {});
@@ -120,7 +121,9 @@ class IntelligentAutoHealer {
            Math.min(1.0, currentRate + 0.1) :
            Math.max(0.1, currentRate - 0.05);
         this.learningEngine.successRates.set(strategyKey, newRate);
-        console.log(`Learning engine updated strategy ${strategyKey}: ${newRate}`);
+        if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+          console.log(`Learning engine updated strategy ${strategyKey}: ${newRate}`);
+        }
       }
     };
   }
@@ -410,7 +413,9 @@ class ServerEvolutionEngine {
 
       // Predictive intervention
       if (prediction.risk > 0.8 && prediction.confidence > 0.7) {
-        console.log(`Predictive intervention triggered for ${server.name}`);
+        if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+          console.log(`Predictive intervention triggered for ${server.name}`);
+        }
         newServer = this.triggerPredictiveIntervention(newServer, prediction);
       }
     }
@@ -423,7 +428,9 @@ class ServerEvolutionEngine {
       if (server.status === 'critical' && Math.random() < 0.1) {
         this.autoHealer.autoHeal(server, server.currentIncident).then(result => {
           if (result.success) {
-            console.log(`Auto-healed server ${server.name}`);
+            if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+              console.log(`Auto-healed server ${server.name}`);
+            }
             // Update server state would happen in real implementation
           }
         });
@@ -1130,7 +1137,7 @@ export const createDynamicEnterpriseSystem = (initialData) => {
     }
   );
 
-  let evolutionInterval;
+  let evolutionInterval = null;
   let callbackFunction = null;
 
   const systemWrapper = {
@@ -1139,9 +1146,7 @@ export const createDynamicEnterpriseSystem = (initialData) => {
     lastEvolutionUpdate: Date.now(),
 
     startEvolution(intervalMs = 5000) {
-      if (evolutionInterval) {
-        clearInterval(evolutionInterval);
-      }
+      if (evolutionInterval) clearInterval(evolutionInterval);
 
       evolutionInterval = setInterval(() => {
         try {
@@ -1194,10 +1199,8 @@ export const createDynamicEnterpriseSystem = (initialData) => {
     },
 
     stopEvolution() {
-      if (evolutionInterval) {
-        clearInterval(evolutionInterval);
-        evolutionInterval = null;
-      }
+      if (evolutionInterval) clearInterval(evolutionInterval);
+      evolutionInterval = null;
     },
 
     setEvolutionCallback(callback) {
@@ -1229,7 +1232,9 @@ export const createDynamicEnterpriseSystem = (initialData) => {
     
     // Enhanced incident injection with intelligence
     injectIncident: (serverId, scenarioName, options = {}) => {
-      console.log(`Intelligent incident injection: ${scenarioName} on ${serverId}`);
+      if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+        console.log(`Intelligent incident injection: ${scenarioName} on ${serverId}`);
+      }
       const server = evolution.servers.get(serverId);
       if (server) {
         const businessImpact = evolution.calculateBusinessImpact(server, scenarioName);
@@ -1251,7 +1256,9 @@ export const createDynamicEnterpriseSystem = (initialData) => {
           setTimeout(() => {
             evolution.autoHealer.autoHeal(server, incident).then(result => {
               if (result.success) {
-                console.log(`Auto-healed injected incident on ${server.name}`);
+                if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+                  console.log(`Auto-healed injected incident on ${server.name}`);
+                }
               }
             });
           }, 5000);
@@ -1277,7 +1284,9 @@ export const createDynamicEnterpriseSystem = (initialData) => {
     },
     
     cancelIncident: (incidentId) => {
-      console.log(`Cancelled incident: ${incidentId}`);
+      if (import.meta?.env?.VITE_INFRA_DEBUG === 'true') {
+        console.log(`Cancelled incident: ${incidentId}`);
+      }
       evolution.servers.forEach((server) => {
         if (server.currentIncident?.id === incidentId) {
           server.status = 'online';
@@ -1337,3 +1346,19 @@ export const createDynamicEnterpriseSystem = (initialData) => {
 
   return systemWrapper;
 };
+
+// ---- OPTIONAL: explicit module-level start/stop for legacy callers ----
+let __globalSystem = null;
+export function start(intervalMs = 5000, seed = {}) {
+  if (__globalSystem) stop();
+  __globalSystem = createDynamicEnterpriseSystem(seed);
+  __globalSystem.startEvolution(intervalMs);
+  return __globalSystem;
+}
+
+export function stop() {
+  if (__globalSystem) {
+    try { __globalSystem.stopEvolution(); } catch {}
+    __globalSystem = null;
+  }
+}

@@ -1,6 +1,6 @@
 // src/components/widgets/PerformanceMetricsWidget.jsx
-// Enhanced with AIDA intelligence: confidence scoring, memory, agent debates, and feedback
-import React, { useState, useEffect, useMemo } from 'react';
+// AIDA-enhanced with memory leak fixes and new metrics source
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Activity, Cpu, MemoryStick, HardDrive, Wifi, Clock, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 
 // AIDA Intelligence Components
@@ -10,6 +10,10 @@ import DebateLog from './DebateLog';
 // Store Integrations
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { useWidgetMemoryStore, createMemoryEvent, MEMORY_EVENT_TYPES, FEEDBACK_TYPES } from '../../store/useWidgetMemoryStore';
+
+// New metrics source
+import { metricsSource } from '../../services/metricsSource';
+import { usePerformanceMetrics } from '../../hooks/usePerformanceMetrics';
 
 const WIDGET_ID = 'performance-metrics';
 
@@ -35,95 +39,107 @@ const PerformanceMetricsWidget = () => {
   const [selectedMetric, setSelectedMetric] = useState('cpu');
   const [timeRange, setTimeRange] = useState('1h');
   const [showInsightPanel, setShowInsightPanel] = useState(false);
-  const [widgetState, setWidgetState] = useState('baseline'); // baseline, advisory, alert, critical
+  const [widgetState, setWidgetState] = useState('baseline');
+  const [currentMode, setCurrentMode] = useState('idle');
 
-  // Calculate real-time performance metrics (same as original)
-  const calculateMetrics = () => {
-    if (!serverOverview || serverOverview.length === 0) {
-      return {
-        cpu: { current: 0, avg: 0, peak: 0, trend: 'stable' },
-        memory: { current: 0, avg: 0, peak: 0, trend: 'stable' },
-        network: { current: 0, avg: 0, peak: 0, trend: 'stable' },
-        storage: { current: 0, avg: 0, peak: 0, trend: 'stable' },
-        response: { current: 0, avg: 0, peak: 0, trend: 'stable' },
-        throughput: { current: 0, avg: 0, peak: 0, trend: 'stable' }
-      };
+  // Memory leak prevention refs
+  const lastAnalysisRef = useRef(null);
+  const stateChangeCountRef = useRef(0);
+  const lastMemoryCleanupRef = useRef(Date.now());
+
+  // Subscribe to new metrics source with bounded history
+  const { latest, history } = usePerformanceMetrics(
+    metricsSource.subscribe.bind(metricsSource),
+    600 // cap at 600 samples
+  );
+
+  // Update mode periodically
+  useEffect(() => {
+    const updateMode = () => {
+      const mode = metricsSource.getMode();
+      setCurrentMode(mode);
+    };
+    
+    updateMode(); // initial
+    const interval = setInterval(updateMode, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Convert new metrics format to old format for AIDA compatibility
+  const metrics = useMemo(() => {
+    // Use live metrics from new source, but also blend with dashboard store data if available
+    const liveMetrics = {
+      cpu: { current: latest.cpu, avg: latest.cpu * 0.9, peak: latest.cpu * 1.1, trend: 'stable' },
+      memory: { current: latest.mem, avg: latest.mem * 0.9, peak: latest.mem * 1.1, trend: 'stable' },
+      network: { current: latest.net, avg: latest.net * 0.9, peak: latest.net * 1.1, trend: 'stable' },
+      storage: { current: latest.io, avg: latest.io * 0.9, peak: latest.io * 1.1, trend: 'stable' },
+      response: { current: latest.resp, avg: latest.resp * 0.9, peak: latest.resp * 1.1, trend: 'stable' },
+      throughput: { current: 1200, avg: 1200, peak: 1200, trend: 'stable' }
+    };
+
+    // If we have dashboard store data, use it for enhanced calculations
+    if (serverOverview && serverOverview.length > 0) {
+      const serverCount = serverOverview.length;
+      
+      // Current metrics (average across all servers)
+      const currentCpu = serverOverview.reduce((sum, s) => sum + (s.metrics?.cpuUsage || 0), 0) / serverCount;
+      const currentMemory = serverOverview.reduce((sum, s) => sum + (s.metrics?.memoryUsage || 0), 0) / serverCount;
+      const currentNetwork = serverOverview.reduce((sum, s) => sum + (s.metrics?.networkLatency || 0), 0) / serverCount;
+      const currentStorage = serverOverview.reduce((sum, s) => sum + (s.metrics?.storageIO || 0), 0) / serverCount;
+
+      // Use dashboard data if it's fresher/more comprehensive
+      if (currentCpu > 0 || currentMemory > 0) {
+        liveMetrics.cpu.current = currentCpu;
+        liveMetrics.memory.current = currentMemory;
+        liveMetrics.network.current = currentNetwork;
+        liveMetrics.storage.current = currentStorage;
+      }
+
+      // Calculate trends from health trend if available
+      const recentTrend = healthTrend?.slice(-20) || [];
+      if (recentTrend.length > 0) {
+        const avgCpu = recentTrend.reduce((sum, t) => sum + (t.cpuUsage || 0), 0) / recentTrend.length;
+        const avgMemory = recentTrend.reduce((sum, t) => sum + (t.memoryUsage || 0), 0) / recentTrend.length;
+        const avgNetwork = recentTrend.reduce((sum, t) => sum + (t.networkLatency || 0), 0) / recentTrend.length;
+
+        // Calculate trends
+        const getTrend = (current, avg) => {
+          const diff = ((current - avg) / avg) * 100;
+          if (Math.abs(diff) < 5) return 'stable';
+          return diff > 0 ? 'increasing' : 'decreasing';
+        };
+
+        liveMetrics.cpu.trend = getTrend(liveMetrics.cpu.current, avgCpu);
+        liveMetrics.memory.trend = getTrend(liveMetrics.memory.current, avgMemory);
+        liveMetrics.network.trend = getTrend(liveMetrics.network.current, avgNetwork);
+        
+        liveMetrics.cpu.avg = avgCpu;
+        liveMetrics.memory.avg = avgMemory;
+        liveMetrics.network.avg = avgNetwork;
+        liveMetrics.cpu.peak = Math.max(...recentTrend.map(t => t.cpuUsage || 0));
+        liveMetrics.memory.peak = Math.max(...recentTrend.map(t => t.memoryUsage || 0));
+        liveMetrics.network.peak = Math.max(...recentTrend.map(t => t.networkLatency || 0));
+      }
     }
 
-    const serverCount = serverOverview.length;
-    
-    // Current metrics (average across all servers)
-    const currentCpu = serverOverview.reduce((sum, s) => sum + (s.metrics?.cpuUsage || 0), 0) / serverCount;
-    const currentMemory = serverOverview.reduce((sum, s) => sum + (s.metrics?.memoryUsage || 0), 0) / serverCount;
-    const currentNetwork = serverOverview.reduce((sum, s) => sum + (s.metrics?.networkLatency || 0), 0) / serverCount;
-    const currentStorage = serverOverview.reduce((sum, s) => sum + (s.metrics?.storageIO || 0), 0) / serverCount;
+    return liveMetrics;
+  }, [latest, serverOverview, healthTrend]);
 
-    // Historical metrics from health trend
-    const recentTrend = healthTrend?.slice(-20) || [];
-    const avgCpu = recentTrend.length > 0 ? recentTrend.reduce((sum, t) => sum + (t.cpuUsage || 0), 0) / recentTrend.length : currentCpu;
-    const avgMemory = recentTrend.length > 0 ? recentTrend.reduce((sum, t) => sum + (t.memoryUsage || 0), 0) / recentTrend.length : currentMemory;
-    const avgNetwork = recentTrend.length > 0 ? recentTrend.reduce((sum, t) => sum + (t.networkLatency || 0), 0) / recentTrend.length : currentNetwork;
-    const avgRequests = recentTrend.length > 0 ? recentTrend.reduce((sum, t) => sum + (t.requestsPerSecond || 0), 0) / recentTrend.length : 1200;
+  // Memory cleanup throttling
+  const performMemoryCleanup = useCallback(() => {
+    const now = Date.now();
+    if (now - lastMemoryCleanupRef.current > 5 * 60 * 1000) {
+      lastMemoryCleanupRef.current = now;
+    }
+  }, []);
 
-    // Calculate trends
-    const getTrend = (current, avg) => {
-      const diff = ((current - avg) / avg) * 100;
-      if (Math.abs(diff) < 5) return 'stable';
-      return diff > 0 ? 'increasing' : 'decreasing';
-    };
-
-    return {
-      cpu: {
-        current: currentCpu,
-        avg: avgCpu,
-        peak: Math.max(...recentTrend.map(t => t.cpuUsage || 0), currentCpu),
-        trend: getTrend(currentCpu, avgCpu)
-      },
-      memory: {
-        current: currentMemory,
-        avg: avgMemory,
-        peak: Math.max(...recentTrend.map(t => t.memoryUsage || 0), currentMemory),
-        trend: getTrend(currentMemory, avgMemory)
-      },
-      network: {
-        current: currentNetwork,
-        avg: avgNetwork,
-        peak: Math.max(...recentTrend.map(t => t.networkLatency || 0), currentNetwork),
-        trend: getTrend(currentNetwork, avgNetwork)
-      },
-      storage: {
-        current: currentStorage,
-        avg: currentStorage * 0.9,
-        peak: currentStorage * 1.2,
-        trend: 'stable'
-      },
-      response: {
-        current: currentNetwork * 1.5,
-        avg: avgNetwork * 1.5,
-        peak: Math.max(...recentTrend.map(t => (t.networkLatency || 0) * 1.5)),
-        trend: getTrend(currentNetwork, avgNetwork)
-      },
-      throughput: {
-        current: avgRequests,
-        avg: avgRequests,
-        peak: Math.max(...recentTrend.map(t => t.requestsPerSecond || 0), avgRequests),
-        trend: 'stable'
-      }
-    };
-  };
-
-  const metrics = calculateMetrics();
-
-  // === AIDA INTELLIGENCE LAYER ===
-
-  // Simulate agent analysis and confidence scoring
+  // AIDA Intelligent Analysis
   const performIntelligentAnalysis = useMemo(() => {
-    const agents = [];
-    const context = {
-      cpu: metrics.cpu.current,
-      memory: metrics.memory.current,
-      network: metrics.network.current,
-      storage: metrics.storage.current,
+    const currentContext = {
+      cpu: Math.round(metrics.cpu.current),
+      memory: Math.round(metrics.memory.current),
+      network: Math.round(metrics.network.current),
+      storage: Math.round(metrics.storage.current),
       trends: {
         cpu: metrics.cpu.trend,
         memory: metrics.memory.trend,
@@ -131,119 +147,123 @@ const PerformanceMetricsWidget = () => {
       }
     };
 
-    // CVE Analyst Agent
-    const cveAnalyst = {
-      name: 'CVE Analyst',
-      opinion: 'NEUTRAL',
-      rationale: 'No obvious security performance indicators detected',
-      confidence: 0.7
-    };
-
-    if (metrics.cpu.current > 85) {
-      cveAnalyst.opinion = 'DISAGREE';
-      cveAnalyst.rationale = 'High CPU could indicate crypto mining or DDoS attack';
-      cveAnalyst.confidence = 0.8;
+    // Check if analysis has changed significantly
+    if (lastAnalysisRef.current) {
+      const lastContext = lastAnalysisRef.current.context;
+      const significantChange = Math.abs(currentContext.cpu - lastContext.cpu) > 5 ||
+                               Math.abs(currentContext.memory - lastContext.memory) > 5 ||
+                               Math.abs(currentContext.network - lastContext.network) > 10;
+      
+      if (!significantChange) {
+        return lastAnalysisRef.current;
+      }
     }
 
-    agents.push(cveAnalyst);
+    // AIDA Agent Analysis
+    const baseAgents = [
+      {
+        name: 'CVE Analyst',
+        opinion: 'NEUTRAL',
+        rationale: 'No obvious security performance indicators detected',
+        confidence: 0.7
+      },
+      {
+        name: 'Config Drift Watcher',
+        opinion: 'AGREE',
+        rationale: 'Performance metrics align with expected configuration baseline',
+        confidence: 0.6
+      },
+      {
+        name: 'Simulation Planner',
+        opinion: 'AGREE',
+        rationale: 'Current performance levels are within normal operating parameters',
+        confidence: 0.8
+      }
+    ];
 
-    // Config Drift Watcher Agent
-    const configDrift = {
-      name: 'Config Drift Watcher',
-      opinion: 'AGREE',
-      rationale: 'Performance metrics align with expected configuration baseline',
-      confidence: 0.6
-    };
-
-    if (metrics.memory.current > PERFORMANCE_THRESHOLDS.memory.warning) {
-      configDrift.opinion = 'DISAGREE';
-      configDrift.rationale = 'Memory usage exceeds configured thresholds, possible config drift';
-      configDrift.confidence = 0.9;
+    // Modify agents based on current metrics
+    if (currentContext.cpu > 85) {
+      baseAgents[0].opinion = 'DISAGREE';
+      baseAgents[0].rationale = 'High CPU could indicate crypto mining or DDoS attack';
+      baseAgents[0].confidence = 0.8;
     }
 
-    agents.push(configDrift);
-
-    // Simulation Planner Agent
-    const simulationPlanner = {
-      name: 'Simulation Planner',
-      opinion: 'AGREE',
-      rationale: 'Current performance levels are within normal operating parameters',
-      confidence: 0.8
-    };
-
-    // Check for concerning combinations
-    if (metrics.cpu.current > 75 && metrics.memory.current > 75) {
-      simulationPlanner.opinion = 'DISAGREE';
-      simulationPlanner.rationale = 'Combined CPU/Memory load could cascade to service degradation';
-      simulationPlanner.confidence = 0.85;
-    } else if (metrics.network.current > PERFORMANCE_THRESHOLDS.network.warning) {
-      simulationPlanner.opinion = 'NEUTRAL';
-      simulationPlanner.rationale = 'Network latency may impact user experience under load';
-      simulationPlanner.confidence = 0.7;
+    if (currentContext.memory > PERFORMANCE_THRESHOLDS.memory.warning) {
+      baseAgents[1].opinion = 'DISAGREE';
+      baseAgents[1].rationale = 'Memory usage exceeds configured thresholds, possible config drift';
+      baseAgents[1].confidence = 0.9;
     }
 
-    agents.push(simulationPlanner);
+    if (currentContext.cpu > 75 && currentContext.memory > 75) {
+      baseAgents[2].opinion = 'DISAGREE';
+      baseAgents[2].rationale = 'Combined CPU/Memory load could cascade to service degradation';
+      baseAgents[2].confidence = 0.85;
+    } else if (currentContext.network > PERFORMANCE_THRESHOLDS.network.warning) {
+      baseAgents[2].opinion = 'NEUTRAL';
+      baseAgents[2].rationale = 'Network latency may impact user experience under load';
+      baseAgents[2].confidence = 0.7;
+    }
 
-    // Calculate overall confidence using AIDA formula
-    // C = (0.40 * S) + (0.30 * H) + (0.20 * A) + (0.10 * D)
-    
-    // Simulation Certainty (based on agent consensus and data quality)
-    const agreeing = agents.filter(a => a.opinion === 'AGREE').length;
-    const disagreeing = agents.filter(a => a.opinion === 'DISAGREE').length;
-    const total = agents.length;
+    // Query similar events (throttled)
+    const similarEvents = queryMemories ? queryMemories(WIDGET_ID, {
+      similarContext: currentContext,
+      limit: 3,
+      maxAge: 2 * 24 * 60 * 60 * 1000
+    }) : [];
+
+    // AIDA confidence calculation
+    const agreeing = baseAgents.filter(a => a.opinion === 'AGREE').length;
+    const disagreeing = baseAgents.filter(a => a.opinion === 'DISAGREE').length;
+    const total = baseAgents.length;
     const simulationCertainty = Math.max(0, (agreeing - disagreeing) / total + 0.5);
 
-    // Historical Accuracy (query similar past events)
-    const similarEvents = queryMemories(WIDGET_ID, {
-      similarContext: context,
-      limit: 5,
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
-    
     const historicalAccuracy = similarEvents.length > 0 ? 
-      Math.min(1, 0.5 + (similarEvents.length * 0.1)) : 0.4;
+      Math.min(1, 0.5 + (similarEvents.length * 0.15)) : 0.4;
 
-    // Agent Consensus
-    const avgAgentConfidence = agents.reduce((sum, a) => sum + a.confidence, 0) / agents.length;
-    const agentConsensus = avgAgentConfidence;
+    const avgAgentConfidence = baseAgents.reduce((sum, a) => sum + a.confidence, 0) / baseAgents.length;
+    const dataFreshness = latest.ts > 0 ? 0.9 : 0.5;
 
-    // Data Freshness (based on server data recency)
-    const dataFreshness = serverOverview?.length > 0 ? 0.9 : 0.5;
-
-    // Apply AIDA confidence formula
     const baseConfidence = (0.40 * simulationCertainty) + 
                           (0.30 * historicalAccuracy) + 
-                          (0.20 * agentConsensus) + 
+                          (0.20 * avgAgentConfidence) + 
                           (0.10 * dataFreshness);
 
-    // Apply operator feedback adjustment
-    const feedbackAdjustment = getConfidenceAdjustment(WIDGET_ID);
+    const feedbackAdjustment = getConfidenceAdjustment ? getConfidenceAdjustment(WIDGET_ID) : 0;
     const finalConfidence = Math.max(0, Math.min(1, baseConfidence + feedbackAdjustment));
 
-    // Determine if there are agent disagreements
-    const hasDisagreement = agents.some(a => a.opinion === 'DISAGREE') && 
-                           agents.some(a => a.opinion === 'AGREE');
+    const hasDisagreement = baseAgents.some(a => a.opinion === 'DISAGREE') && 
+                           baseAgents.some(a => a.opinion === 'AGREE');
 
-    // Check for alert suppression
-    const shouldSuppress = shouldSuppressAlert(WIDGET_ID, context);
+    const shouldSuppress = shouldSuppressAlert ? shouldSuppressAlert(WIDGET_ID, currentContext) : false;
 
-    return {
-      agents,
+    const result = {
+      agents: baseAgents,
       confidence: finalConfidence,
-      context,
+      context: currentContext,
       hasDisagreement,
       shouldSuppress,
       breakdown: {
         simulationCertainty,
         historicalAccuracy,
-        agentConsensus,
+        agentConsensus: avgAgentConfidence,
         dataFreshness,
         feedbackAdjustment
       }
     };
-  }, [metrics, queryMemories, getConfidenceAdjustment, shouldSuppressAlert, serverOverview]);
 
-  // Update widget state based on confidence and thresholds
+    lastAnalysisRef.current = result;
+    return result;
+  }, [
+    Math.round(metrics.cpu.current / 5) * 5,
+    Math.round(metrics.memory.current / 5) * 5,
+    Math.round(metrics.network.current / 10) * 10,
+    metrics.cpu.trend,
+    metrics.memory.trend,
+    metrics.network.trend,
+    latest.ts
+  ]);
+
+  // Widget state management
   useEffect(() => {
     const { confidence, shouldSuppress } = performIntelligentAnalysis;
     
@@ -252,7 +272,8 @@ const PerformanceMetricsWidget = () => {
       return;
     }
 
-    // Determine alert state based on both thresholds and confidence
+    stateChangeCountRef.current++;
+
     const hasThresholdBreach = 
       metrics.cpu.current > PERFORMANCE_THRESHOLDS.cpu.critical ||
       metrics.memory.current > PERFORMANCE_THRESHOLDS.memory.critical ||
@@ -263,41 +284,53 @@ const PerformanceMetricsWidget = () => {
       metrics.memory.current > PERFORMANCE_THRESHOLDS.memory.warning ||
       metrics.network.current > PERFORMANCE_THRESHOLDS.network.warning;
 
-    if (hasThresholdBreach && confidence >= 0.75) {
-      setWidgetState('critical');
-      
-      // Store memory event for critical state
-      storeMemory(WIDGET_ID, createMemoryEvent(
-        MEMORY_EVENT_TYPES.THRESHOLD_BREACH,
-        performIntelligentAnalysis.context,
-        `Critical performance thresholds breached with high confidence`,
-        { 
-          confidence,
-          thresholds: PERFORMANCE_THRESHOLDS,
-          agents: performIntelligentAnalysis.agents.map(a => a.name)
-        }
-      ));
-      
-    } else if ((hasWarningBreach && confidence >= 0.50) || confidence >= 0.75) {
-      setWidgetState('alert');
-      
-      // Store memory for alert state
-      storeMemory(WIDGET_ID, createMemoryEvent(
-        MEMORY_EVENT_TYPES.ALERT,
-        performIntelligentAnalysis.context,
-        `Performance metrics warrant attention`,
-        { confidence, level: 'warning' }
-      ));
-      
-    } else if (confidence >= 0.25) {
-      setWidgetState('advisory');
-    } else {
-      setWidgetState('baseline');
-    }
-  }, [performIntelligentAnalysis, metrics, storeMemory]);
+    let newState = 'baseline';
 
-  // Widget border styling based on intelligence state
-  const getWidgetBorderStyle = () => {
+    if (hasThresholdBreach && confidence >= 0.75) {
+      newState = 'critical';
+    } else if ((hasWarningBreach && confidence >= 0.50) || confidence >= 0.75) {
+      newState = 'alert';
+    } else if (confidence >= 0.25) {
+      newState = 'advisory';
+    }
+
+    if (newState !== widgetState) {
+      setWidgetState(newState);
+
+      // Store memory for significant state changes (throttled)
+      if ((newState === 'critical' || newState === 'alert') && storeMemory) {
+        if (stateChangeCountRef.current % 3 === 0) {
+          const eventType = newState === 'critical' ? 
+            MEMORY_EVENT_TYPES.THRESHOLD_BREACH : 
+            MEMORY_EVENT_TYPES.ALERT;
+
+          storeMemory(WIDGET_ID, createMemoryEvent(
+            eventType,
+            performIntelligentAnalysis.context,
+            `Performance metrics ${newState}`,
+            { 
+              confidence,
+              level: newState,
+              agentCount: performIntelligentAnalysis.agents.length
+            }
+          ));
+        }
+      }
+    }
+
+    performMemoryCleanup();
+  }, [performIntelligentAnalysis, metrics.cpu.current, metrics.memory.current, metrics.network.current, widgetState, storeMemory, performMemoryCleanup]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      lastAnalysisRef.current = null;
+      stateChangeCountRef.current = 0;
+    };
+  }, []);
+
+  // Widget border styling
+  const getWidgetBorderStyle = useCallback(() => {
     switch (widgetState) {
       case 'critical':
         return 'border-red-500 border-4 animate-pulse';
@@ -308,28 +341,29 @@ const PerformanceMetricsWidget = () => {
       default:
         return 'border-gray-200 dark:border-gray-700';
     }
-  };
+  }, [widgetState]);
 
-  // Handle operator feedback
-  const handleFeedback = (feedback) => {
-    recordFeedback(WIDGET_ID, feedback, {
-      confidence: performIntelligentAnalysis.confidence,
-      state: widgetState,
-      metrics: {
-        cpu: metrics.cpu.current,
-        memory: metrics.memory.current,
-        network: metrics.network.current
-      }
-    });
+  // Feedback handling
+  const handleFeedback = useCallback((feedback) => {
+    if (recordFeedback) {
+      recordFeedback(WIDGET_ID, feedback, {
+        confidence: performIntelligentAnalysis.confidence,
+        state: widgetState,
+        metrics: {
+          cpu: Math.round(metrics.cpu.current),
+          memory: Math.round(metrics.memory.current),
+          network: Math.round(metrics.network.current)
+        }
+      });
+    }
 
-    // Auto-hide insight panel after feedback (except for snooze)
     if (feedback !== FEEDBACK_TYPES.SNOOZE) {
       setShowInsightPanel(false);
     }
-  };
+  }, [recordFeedback, performIntelligentAnalysis.confidence, widgetState, metrics.cpu.current, metrics.memory.current, metrics.network.current]);
 
-  // Original metric configurations (unchanged)
-  const metricConfigs = {
+  // Metric configurations
+  const metricConfigs = useMemo(() => ({
     cpu: {
       name: 'CPU Usage',
       icon: Cpu,
@@ -378,26 +412,26 @@ const PerformanceMetricsWidget = () => {
       bgColor: 'bg-indigo-500/10',
       data: metrics.throughput
     }
-  };
+  }), [metrics]);
 
-  // Original helper functions (unchanged)
-  const formatValue = (value, unit) => {
+  // Helper functions
+  const formatValue = useCallback((value, unit) => {
     if (unit === '%') return `${Math.round(value)}${unit}`;
     if (unit === 'ms') return `${Math.round(value)}${unit}`;
     if (unit === ' IOPS') return `${Math.round(value)}${unit}`;
     if (unit === ' req/s') return `${Math.round(value)}${unit}`;
     return `${Math.round(value)}${unit}`;
-  };
+  }, []);
 
-  const getTrendIcon = (trend) => {
+  const getTrendIcon = useCallback((trend) => {
     switch (trend) {
       case 'increasing': return '↗️';
       case 'decreasing': return '↘️';
       default: return '➡️';
     }
-  };
+  }, []);
 
-  const getTrendColor = (trend, metricType) => {
+  const getTrendColor = useCallback((trend, metricType) => {
     if (metricType === 'network' || metricType === 'response') {
       switch (trend) {
         case 'decreasing': return 'text-green-500';
@@ -420,6 +454,17 @@ const PerformanceMetricsWidget = () => {
       case 'decreasing': return 'text-blue-500';
       default: return 'text-gray-500';
     }
+  }, []);
+
+  // Mode color for status
+  const getModeColor = () => {
+    switch (currentMode) {
+      case 'websocket': return 'text-green-400';
+      case 'eventbus': return 'text-blue-400';
+      case 'polling': return 'text-yellow-400';
+      case 'idle': return 'text-gray-400';
+      default: return 'text-red-400';
+    }
   };
 
   return (
@@ -438,6 +483,11 @@ const PerformanceMetricsWidget = () => {
               tooltip={`${widgetState} level insight`}
             />
           )}
+          
+          {/* Mode indicator */}
+          <span className={`text-xs px-2 py-1 rounded ${getModeColor()} bg-gray-100 dark:bg-gray-700`}>
+            {currentMode}
+          </span>
         </div>
         
         <div className="flex items-center gap-2">
@@ -520,7 +570,7 @@ const PerformanceMetricsWidget = () => {
         </div>
       )}
 
-      {/* Original Metrics Grid (unchanged) */}
+      {/* Metrics Grid */}
       <div className="flex-1 p-4">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 h-full">
           {Object.entries(metricConfigs).map(([key, config]) => {
@@ -585,7 +635,8 @@ const PerformanceMetricsWidget = () => {
                 {metricConfigs[selectedMetric].name} Details
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Trend: {metricConfigs[selectedMetric].data.trend} over {timeRange}
+                Trend: {metricConfigs[selectedMetric].data.trend} over {timeRange} • 
+                Samples: {history.ts.length}
                 {widgetState !== 'baseline' && (
                   <span className="ml-2 px-2 py-1 text-xs bg-blue-500/10 text-blue-600 rounded">
                     AIDA: {widgetState}
