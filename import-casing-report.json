@@ -1,0 +1,242 @@
+[
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/_old_App.jsx",
+    "original": "./components/os/DesktopShell.jsx",
+    "suggested": "./components/os/DesktopShell",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\DesktopShell.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/App.jsx",
+    "original": "./components/ui/ToastProvider.jsx",
+    "suggested": "./components/ui/ToastProvider",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\ui\\ToastProvider.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx",
+    "original": "./setupMetrics.ts",
+    "suggested": "./setupMetrics",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\setupMetrics.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx",
+    "original": "./App.jsx",
+    "suggested": "./App",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\App.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx",
+    "original": "./lib/appInitialization.js",
+    "suggested": "./lib/appInitialization",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\lib\\appInitialization.js"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx",
+    "original": "./lib/nextLevelServerFeatures.js",
+    "suggested": "./lib/nextLevelServerFeatures",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\lib\\nextLevelServerFeatures.js"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/hooks/useBreachToasts.jsx",
+    "original": "../components/ui/ToastProvider.jsx",
+    "suggested": "../components/ui/ToastProvider",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\ui\\ToastProvider.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/hooks/useBreachToasts.jsx",
+    "original": "../store/useUIStore.ts",
+    "suggested": "../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/lib/nextLevelServerFeatures.js",
+    "original": "./serviceDiscovery.js",
+    "suggested": "./serviceDiscovery",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\lib\\serviceDiscovery.js"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/PluginsWindow.jsx",
+    "original": "./PluginsPullout",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../../store/useServerStore",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../../store/useSimulationStore",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../modals/ExecuteConfirmationModal",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/SimulationPlanPane",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/InventoryView",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/AnalyticsView",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/AuditTrailView",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/DatacenterCard",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx",
+    "original": "../infrastructure/SummaryCard",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/AppLauncher.jsx",
+    "original": "../../store/useUIStore.ts",
+    "suggested": "../../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "./WindowManager.jsx",
+    "suggested": "./WindowManager",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\WindowManager.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "./Taskbar.jsx",
+    "suggested": "./Taskbar",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\Taskbar.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "./AppLauncher.jsx",
+    "suggested": "./AppLauncher",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\AppLauncher.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "./ContextMenu.jsx",
+    "suggested": "./ContextMenu",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\ContextMenu.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "./DesktopPins.jsx",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "../../hooks/useBreachToasts.jsx",
+    "suggested": "../../hooks/useBreachToasts",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\hooks\\useBreachToasts.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx",
+    "original": "../../store/useUIStore.ts",
+    "suggested": "../../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Taskbar.jsx",
+    "original": "../../store/useUIStore.ts",
+    "suggested": "../../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Taskbar.jsx",
+    "original": "./plugins/PluginsTrayButton.jsx",
+    "suggested": "./plugins/PluginsTrayButton",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\plugins\\PluginsTrayButton.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Window.jsx",
+    "original": "../../store/useUIStore.ts",
+    "suggested": "../../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx",
+    "original": "./Window.jsx",
+    "suggested": "./Window",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\os\\Window.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx",
+    "original": "../../store/useUIStore.ts",
+    "suggested": "../../store/useUIStore",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\store\\useUIStore.ts"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx",
+    "original": "./plugins/PluginsWindowBody.jsx",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/AssetCard.jsx",
+    "original": "../feedback/StatusBadge",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/AuditTrailView.jsx",
+    "original": "../feedback/StatusBadge",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/DatacenterCard.jsx",
+    "original": "../feedback/StatusBadge",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/InventoryView.jsx",
+    "original": "../feedback/StatusBadge",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/SimulationPlanPane.jsx",
+    "original": "../feedback/StatusBadge",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/apps/BreachMonitorApp.jsx",
+    "original": "../../ui/ToastProvider.jsx",
+    "suggested": "../../ui/ToastProvider",
+    "actualAbsPath": "C:\\Users\\xenog\\Documents\\Kestrel\\Project-Kestrel-main\\Project-Kestrel-main\\src\\components\\ui\\ToastProvider.jsx"
+  },
+  {
+    "file": "C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/apps/WidgetApp.jsx",
+    "original": "../../widgets/WidgetRenderer.jsx",
+    "suggested": "(unresolved) check path/filename exists",
+    "actualAbsPath": "(not found)"
+  }
+]

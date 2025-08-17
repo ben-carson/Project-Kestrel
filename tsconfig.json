@@ -1,17 +1,59 @@
 {
   "compilerOptions": {
+    /* Target modern JS for better tree-shaking and smaller bundles */
     "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    /* React & JSX */
     "jsx": "react-jsx",
-    "moduleResolution": "bundler",
+
+    /* Type strictness (max signal) */
     "strict": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["./*"]
-    },
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
+    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
+
+    /* Build perf & DX */
     "skipLibCheck": true,
-    "types": ["vite/client", "react", "react-dom"]
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+
+    /* Path aliases (sync with Vite) */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@core/*": ["src/core/*"],
+      "@components/*": ["src/components/*"],
+      "@plugins/*": ["src/plugins/*"],
+      "@types/*": ["src/types/*"],
+      "@store/*": ["src/store/*"],
+      "@utils/*": ["src/utils/*"]
+    },
+
+    /* Ambient types for Vite/Node/test */
+    "types": ["vite/client", "node"],
+
+    /* Emission (we don’t emit from tsc in Vite; keep tsc for typecheck) */
+    "noEmit": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "server"]
+  "include": [
+    "src",
+    "src/env.d.ts",
+    "vite.config.ts",
+    "tsconfig.node.json"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ]
 }

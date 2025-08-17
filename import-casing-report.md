@@ -1,0 +1,164 @@
+# Import Casing Report
+
+Found **40** import/export path(s) that don't match the filesystem casing.
+
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/_old_App.jsx`
+  - Import: `./components/os/DesktopShell.jsx`
+  - Suggested: `./components/os/DesktopShell`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\DesktopShell.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/App.jsx`
+  - Import: `./components/ui/ToastProvider.jsx`
+  - Suggested: `./components/ui/ToastProvider`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\ui\ToastProvider.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx`
+  - Import: `./setupMetrics.ts`
+  - Suggested: `./setupMetrics`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\setupMetrics.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx`
+  - Import: `./App.jsx`
+  - Suggested: `./App`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\App.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx`
+  - Import: `./lib/appInitialization.js`
+  - Suggested: `./lib/appInitialization`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\lib\appInitialization.js`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/main.jsx`
+  - Import: `./lib/nextLevelServerFeatures.js`
+  - Suggested: `./lib/nextLevelServerFeatures`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\lib\nextLevelServerFeatures.js`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/hooks/useBreachToasts.jsx`
+  - Import: `../components/ui/ToastProvider.jsx`
+  - Suggested: `../components/ui/ToastProvider`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\ui\ToastProvider.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/hooks/useBreachToasts.jsx`
+  - Import: `../store/useUIStore.ts`
+  - Suggested: `../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/lib/nextLevelServerFeatures.js`
+  - Import: `./serviceDiscovery.js`
+  - Suggested: `./serviceDiscovery`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\lib\serviceDiscovery.js`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/PluginsWindow.jsx`
+  - Import: `./PluginsPullout`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../../store/useServerStore`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../../store/useSimulationStore`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../modals/ExecuteConfirmationModal`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/SimulationPlanPane`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/InventoryView`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/AnalyticsView`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/AuditTrailView`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/DatacenterCard`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/legacy/InfrastructurePage.jsx`
+  - Import: `../infrastructure/SummaryCard`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/AppLauncher.jsx`
+  - Import: `../../store/useUIStore.ts`
+  - Suggested: `../../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `./WindowManager.jsx`
+  - Suggested: `./WindowManager`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\WindowManager.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `./Taskbar.jsx`
+  - Suggested: `./Taskbar`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\Taskbar.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `./AppLauncher.jsx`
+  - Suggested: `./AppLauncher`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\AppLauncher.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `./ContextMenu.jsx`
+  - Suggested: `./ContextMenu`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\ContextMenu.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `./DesktopPins.jsx`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `../../hooks/useBreachToasts.jsx`
+  - Suggested: `../../hooks/useBreachToasts`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\hooks\useBreachToasts.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/DesktopShell.jsx`
+  - Import: `../../store/useUIStore.ts`
+  - Suggested: `../../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Taskbar.jsx`
+  - Import: `../../store/useUIStore.ts`
+  - Suggested: `../../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Taskbar.jsx`
+  - Import: `./plugins/PluginsTrayButton.jsx`
+  - Suggested: `./plugins/PluginsTrayButton`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\plugins\PluginsTrayButton.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/Window.jsx`
+  - Import: `../../store/useUIStore.ts`
+  - Suggested: `../../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx`
+  - Import: `./Window.jsx`
+  - Suggested: `./Window`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\os\Window.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx`
+  - Import: `../../store/useUIStore.ts`
+  - Suggested: `../../store/useUIStore`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\store\useUIStore.ts`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/WindowManager.jsx`
+  - Import: `./plugins/PluginsWindowBody.jsx`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/AssetCard.jsx`
+  - Import: `../feedback/StatusBadge`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/AuditTrailView.jsx`
+  - Import: `../feedback/StatusBadge`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/DatacenterCard.jsx`
+  - Import: `../feedback/StatusBadge`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/InventoryView.jsx`
+  - Import: `../feedback/StatusBadge`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/plugins/infrastructure/SimulationPlanPane.jsx`
+  - Import: `../feedback/StatusBadge`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/apps/BreachMonitorApp.jsx`
+  - Import: `../../ui/ToastProvider.jsx`
+  - Suggested: `../../ui/ToastProvider`
+  - Actual FS: `C:\Users\xenog\Documents\Kestrel\Project-Kestrel-main\Project-Kestrel-main\src\components\ui\ToastProvider.jsx`
+- **File:** `C:/Users/xenog/Documents/Kestrel/Project-Kestrel-main/Project-Kestrel-main/src/components/os/apps/WidgetApp.jsx`
+  - Import: `../../widgets/WidgetRenderer.jsx`
+  - Suggested: `(unresolved) check path/filename exists`
+  - Actual FS: `(not found)`

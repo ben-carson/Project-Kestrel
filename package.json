@@ -1,49 +1,54 @@
 {
-  "name": "kestrel-desktop",
-  "version": "0.3.0",
-  "private": true,
-  "scripts": {
-    "dev": "concurrently -k -n FE,API -c blue,green \"vite\" \"node server/index.js\"",
-    "serve": "node server/index.js",
-    "build": "vite build",
-    "start": "NODE_ENV=production node server/index.js",
-    "preview": "vite preview",
-    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0"
-  },
-  "dependencies": {
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "classnames": "^2.5.1",
-    "concurrently": "^8.2.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "immer": "^10.1.1",
-    "lucide-react": "^0.474.0",
-    "morgan": "^1.10.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-hotkeys-hook": "^5.1.0",
-    "react-rnd": "^10.5.2",
-    "recharts": "^3.1.2",
-    "zustand": "^4.5.5"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.9.0",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "globals": "^15.8.0",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4",
-    "vite": "^7.1.2"
-  },
-  "engines": {
-    "node": ">=18.18"
-  }
+    "name":  "kestrel-desktop",
+    "version":  "0.3.0",
+    "private":  true,
+    "scripts":  {
+                    "dev":  "concurrently -k -n FE,API -c blue,green \"vite\" \"node server/index.js\"",
+                    "serve":  "node server/index.js",
+                    "build":  "vite build",
+                    "start":  "NODE_ENV=production node server/index.js",
+                    "preview":  "vite preview",
+                    "lint":  "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
+                    "lint:casing":  "node scripts/report-import-casing.cjs"
+                },
+    "dependencies":  {
+                         "ajv":  "^8.17.1",
+                         "ajv-formats":  "^3.0.1",
+                         "classnames":  "^2.5.1",
+                         "concurrently":  "^8.2.2",
+                         "cors":  "^2.8.5",
+                         "dotenv":  "^16.4.5",
+                         "express":  "^4.19.2",
+                         "immer":  "^10.1.1",
+                         "lucide-react":  "^0.474.0",
+                         "morgan":  "^1.10.0",
+                         "react":  "^18.3.1",
+                         "react-dom":  "^18.3.1",
+                         "react-hotkeys-hook":  "^5.1.0",
+                         "react-rnd":  "^10.5.2",
+                         "recharts":  "^3.1.2",
+                         "zustand":  "^4.5.5"
+                     },
+    "devDependencies":  {
+                            "@eslint/js":  "^9.9.0",
+                            "@types/react":  "^18.2.66",
+                            "@types/react-dom":  "^18.2.22",
+                            "@vitejs/plugin-react":  "^4.3.1",
+                            "autoprefixer":  "^10.4.20",
+                            "eslint":  "^8.57.0",
+                            "eslint-plugin-react":  "^7.35.0",
+                            "eslint-plugin-react-hooks":  "^4.6.0",
+                            "globals":  "^15.8.0",
+                            "postcss":  "^8.4.41",
+                            "tailwindcss":  "^3.4.10",
+                            "ts-morph":  "^26.0.0",
+                            "ts-node":  "^10.9.2",
+                            "typescript":  "^5.9.2",
+                            "vite":  "^7.1.2",
+                            "vite-tsconfig-paths":  "^5.1.4"
+                        },
+    "engines":  {
+                    "node":  "\u003e=18.18"
+                },
+    "type":  "module"
 }
