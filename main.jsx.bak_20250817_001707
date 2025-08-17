@@ -1,0 +1,126 @@
+// src/main.jsx
+import React, { useEffect, useRef } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import "./setupMetrics.ts";
+import App from "./App.jsx";
+
+import { busPublish } from "./core/busShim";
+import { attachKestrelMetrics } from "./core/eventBusMetrics";
+import { getMetricsSource } from "./services/metricsSource";
+
+// ⇩ NEW: plugin system boot
+import { registerLocalShells } from "./bootstrap/registerLocalShells";
+import { loadRuntimePlugins } from "./plugins/runtimeLoader";
+
+// ⇩ NEW: simulation modules
+import { mockServerData } from "./data/mockserverdata";
+import { createDynamicEnterpriseSystem } from "./data/dynamicServerEvolution";
+
+// Keep legacy incident/replay tools from /data (if you still use them)
+import { IncidentInjectionAPI, HistoricalReplayManager } from "./data/nextLevelServerFeatures";
+
+// NEW: layered discovery + enhanced topology manager
+import { initializeServiceDiscovery, getDefaultApplications } from "./lib/appInitialization.js";
+import { ApplicationTopologyManager, assignServerPersonalities } from "./lib/nextLevelServerFeatures.js";
+
+const servers = []; // or your real server inventory
+const apps = getDefaultApplications();
+
+const topology = new ApplicationTopologyManager(apps, servers);
+// Optional: expose for dev tools / dashboards that read discovery stats
+window.topologyManager = topology;
+const initializeMetrics = () => {
+  const wsUrl = import.meta.env.VITE_WS_URL;
+
+  // 1) Prefer WebSocket push for production or if explicitly configured
+  if (wsUrl) {
+    console.log("[main] Initializing WebSocket metrics sources:", wsUrl);
+    // ... (WebSocket setup remains the same)
+    return "websocket";
+  }
+
+  // 2) Fall back to the integrated dynamic simulation for development
+  if (eventBus && import.meta.env.DEV) {
+    console.log("[main] Initializing DYNAMIC SIMULATION as metrics source");
+
+    // --- A. INITIALIZE THE SIMULATION WORLD ---
+    const initialServersWithPersonality = assignServerPersonalities(mockServerData.serverOverview);
+    const seedData = { ...mockServerData, serverOverview: initialServersWithPersonality };
+
+    const topologyManager = new ApplicationTopologyManager(seedData.applications, seedData.serverOverview);
+    const dynamicSystem = createDynamicEnterpriseSystem(seedData);
+    const incidentApi = new IncidentInjectionAPI(dynamicSystem); // Connect API to the engine
+
+    // --- B. DEFINE THE SIMULATION TICK HANDLER ---
+    // This is the core integration point. On every tick, we publish live data to the event bus.
+    const onEvolutionTick = (evolvedServers, systemHealth, _, context) => {
+      // Calculate live application health using the topology manager
+      const liveApplicationHealth = topologyManager.getAllApplicationHealth(evolvedServers);
+
+      // Publish the two primary streams of data that the UI expects
+      busPublish(eventBus, "metrics", { scope: "system", payload: { systemHealth, applicationHealth: Object.fromEntries(liveApplicationHealth) }});
+      busPublish(eventBus, "metrics", { scope: "global", payload: { servers: evolvedServers, ...context }});
+    };
+
+    // --- C. ATTACH METRICS LISTENERS AND START THE SIMULATION ---
+    // Listen to the bus and feed the global metrics source
+    attachKestrelMetrics(eventBus, { sourceKey: "global" });
+    // Listen for system-scoped messages and feed the system-health source
+    attachKestrelMetrics(eventBus, {
+      sourceKey: "system-health",
+      filter: (p) => p?.scope === "system",
+    });
+
+    dynamicSystem.setEvolutionCallback(onEvolutionTick);
+    dynamicSystem.startEvolution(3000); // Evolve state every 3 seconds
+
+    // --- D. DEMONSTRATE INTERACTION (Optional) ---
+    // Example of using the Incident API to trigger chaos
+    setTimeout(() => {
+        try {
+            const target = seedData.serverOverview.find(s => s.name === 'app-dotnet-01');
+            if (target) {
+                console.warn(`[sim] Injecting 'memory_exhaustion' incident into ${target.name}`);
+                incidentApi.injectIncident(target.id, 'memory_exhaustion', { duration: 30000 });
+            }
+        } catch(e) { console.error(e); }
+    }, 15000); // Inject incident after 15 seconds
+
+    return "simulation";
+  }
+
+  // 3) No push configured — widgets can choose polling
+  console.warn(
+    "[main] No push source available; metrics will use polling if enabled in widgets"
+  );
+  return "polling";
+};
+
+function Boot() {
+  const booted = useRef(false);
+
+  useEffect(() => {
+    if (booted.current) return;
+    booted.current = true;
+
+    try {
+      const mode = initializeMetrics();
+      console.log(`[main] Metrics initialized in ${mode} mode`);
+      registerLocalShells();
+      loadRuntimePlugins().catch((e) =>
+        console.error("[plugins] runtime loader failed:", e)
+      );
+    } catch (e) {
+      console.error("[boot] failed:", e);
+    }
+  }, []);
+
+  return (
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<Boot />);
