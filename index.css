@@ -3,3 +3,10 @@
 @tailwind utilities;
 
 html, body, #root { height: 100%; }
+
+.topology-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647; /* above everything */
+  background: #ffffff; /* or use a Tailwind container if you prefer */
+}

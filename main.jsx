@@ -79,12 +79,12 @@ function initializeMetrics() {
       topic: "metrics",
       filter: (m) => m?.scope === "system",
     });
-
+	let engineReady = false;
     // Evolution tick → publish both streams
     const onEvolutionTick = (evolvedServers, systemHealth, _unused, context) => {
       const liveAppHealthEntries = topologyManager.getAllApplicationHealth(evolvedServers);
       const liveAppHealth = Object.fromEntries(liveAppHealthEntries);
-
+	  engineReady = true;
       busPublish(eventBus, "metrics", {
         scope: "system",
         payload: { systemHealth, applicationHealth: liveAppHealth },
@@ -101,14 +101,18 @@ function initializeMetrics() {
 
     // Demo incident after 15s (safe-guarded)
     setTimeout(() => {
+      // Only inject once the engine has started ticking
+      if (!engineReady) {
+        console.warn("[sim] Skipping demo incident: evolution engine not ready yet");
+        return;
+      }
+      const target = seedData.serverOverview.find((s) => s.name === "app-dotnet-01");
+      if (!target || typeof incidentApi?.injectIncident !== "function") return;
       try {
-        const target = seedData.serverOverview.find((s) => s.name === "app-dotnet-01");
-        if (target) {
-          console.warn(`[sim] Injecting 'memory_exhaustion' into ${target.name}`);
-          incidentApi.injectIncident(target.id, "memory_exhaustion", { duration: 30000 });
-        }
+        console.warn(`[sim] Injecting 'memory_exhaustion' into ${target.name}`);
+        incidentApi.injectIncident(target.id, "memory_exhaustion", { duration: 30000 });
       } catch (e) {
-        console.error("[sim] incident injection failed:", e);
+        console.warn("[sim] Suppressing injection until ready:", e?.message || e);
       }
     }, 15000);
 
@@ -162,3 +166,5 @@ function Boot() {
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing #root element");
 createRoot(root).render(<Boot />);
+
+
